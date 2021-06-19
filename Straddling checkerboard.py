@@ -39,3 +39,19 @@ while z<5:
 
 print(slownik_kodu)
 
+'''Define encoding function '''
+def encode(tekst):
+    result=""
+    tekst=tekst.lower()
+    for i in tekst:
+        if i in slownik_kodu.keys():
+            result = result + slownik_kodu[i] + " "
+
+    return f"Zaszyfrowany tekst: {result.replace(' ', '')}"
+
+proba1="Wszechświat ma około czternaście miliardów lat."
+
+print(encode(proba1))
+
+
+
