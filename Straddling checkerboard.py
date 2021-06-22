@@ -102,11 +102,20 @@ def decode(proba,table):
         z += 1
 
     result=""
-    proba=proba.split(" ")
 
-    #Tutaj wstawianie spacji iteracyjnie
 
-    for i,j in enumerate(proba):
+    wskaznik=0
+    decode_list=[]
+
+    while wskaznik< len(proba):
+        if proba[wskaznik] in slownik_kodu.values():
+            decode_list.append(proba[wskaznik])
+            wskaznik+=1
+        else:
+            decode_list.append(proba[wskaznik]+proba[wskaznik+1])
+            wskaznik+=2
+
+    for i,j in enumerate(decode_list):
         for k,v in slownik_kodu.items():
             if j==v:
                 result=result+k
@@ -116,9 +125,9 @@ def decode(proba,table):
     return f"Tekst odszyfrowany: {result.capitalize()}"
 
 
-proba2="813050333881278493279634636693358408547383320932210278537898191078417"
+proba2="81305033193881278493279634636693358408547383320932210278537898191078417"
 #proba2="81 30 5 0 33 19 38 81 2 7 84 9 32 7 9 6 34 6 36 6 9 33 5 84 0 85 4 7 38 33 2 0 9 32 2 10 2 7 85 37 89 81 9 10 7 84 17"
 
-print(decode(proba2,table))
 
+print(decode(proba2,table))
 
