@@ -6,7 +6,7 @@ table = [["8", "3", "1", "4", "0", "5", "7", "2", "6", "9"],
          ["" ,""  ,""  ,"n" ,"e" ,"z" ,"a" , "i", "o", " "],
          ["ć", "u", "w", "t", "g", "r", "f", "p", "ń", "ó"],
          ["ś", "c", "b", "k", "s", "ę", "d", "m", "ł", "ź"],
-         ["ż", "/", "ą", "?", "l", "j", ".", ",", "y", "h"]]
+         ["ż", "!", "ą", "?", "l", "j", ".", ",", "y", "h"]]
 
 '''
 1. Trzeba stworzyć tablicę częstotliwości dla używanego alfabetu (bigram.txt, trigram.txt quadram.txt).
@@ -133,7 +133,7 @@ print(decode(proba2,table))
 
 '''We are gonna to try atack this code in atack below this comment.'''
 
-ngrams= Ngram_score("pl_quadgrams_zmniejszone.txt")
+# ngrams= Ngram_score("pl_quadgrams_zmniejszone.txt")
 
 nr_pl_znak_i_inter=[243,261,263,281,322,324,347,378,380,47,63,46,32,44]
 
@@ -142,14 +142,6 @@ alphabet = "".join([chr(97+i) for i in range(26)])
 for i in nr_pl_znak_i_inter:
     alphabet=alphabet+chr(i)
 
-first_key="".join(random.sample(alphabet,40))
-print(first_key)
-real_key=encode(first_key,table)
-print(real_key)
-
-# key="".join(random.sample(for_random_key,))
-# print(key)
-# print(encode(alphabet,table))
 
 
 
