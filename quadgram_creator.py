@@ -29,4 +29,4 @@ quad_dict=sorted(quad_dict.items(),key=lambda item: item[1], reverse=True)
 
 with open("pl_quadgram.txt","w", encoding="utf-8") as file:
     for k,v in quad_dict:
-        file.write(f"{k}*{v}\n")
+        file.write(f"{k}${v}\n")
