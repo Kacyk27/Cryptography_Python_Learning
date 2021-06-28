@@ -3,7 +3,7 @@ import random
 from ngram import Ngram_score
 
 table = [["8", "3", "1", "4", "0", "5", "7", "2", "6", "9"],
-         ["" ,""  ,""  ,"n" ,"e" ,"z" ,"a" , "i", "o", " "],
+         ["" , "" , "" ,"n" ,"e" ,"z" ,"a" , "i", "o", " "],
          ["ć", "u", "w", "t", "g", "r", "f", "p", "ń", "ó"],
          ["ś", "c", "b", "k", "s", "ę", "d", "m", "ł", "ź"],
          ["ż", "!", "ą", "?", "l", "j", ".", ",", "y", "h"]]
@@ -135,18 +135,19 @@ def decode(proba,table):
 
 ngrams= Ngram_score("pl_quadgram.txt", sep="$")
 
-nr_pl_znak_i_inter=[243,261,263,281,322,324,347,378,380,47,63,46,32,44]
+nr_pl_znak_i_inter=[243,261,263,281,322,324,347,378,380,33,63,46,32,44]
 
 alphabet = "".join([chr(97+i) for i in range(26)])
+alphabet=alphabet.replace("q","")
+alphabet=alphabet.replace("x","")
+alphabet=alphabet.replace("v","")
 
 for i in nr_pl_znak_i_inter:
     alphabet=alphabet+chr(i)
 print(alphabet)
 print(len(alphabet))
 
-tekst_jawny= """
-
-Krótka i piękna kariera Zenona Ziembiewicza, zakończona tak groteskowo i tragicznie, dała
+tekst_jawny= """Krótka i piękna kariera Zenona Ziembiewicza, zakończona tak groteskowo i tragicznie, dała
 się teraz od strony tego niedorzecznego finału rozważać całkiem na nowo. Jego powszechnie
 znana sylwetka, trochę pochylona, przemykająca prawie co dnia długim, odkrytym autem
 przez ulice miasta, jego twarz o garbatym profilu i ascetycznie wydłużonej dolnej szczęce, dla
@@ -203,3 +204,6 @@ slow_czestotliwosci=sorted(slow_czestotliwosci.items(),key=lambda item: item[1],
 
 print(slow_czestotliwosci)
 
+key=f"{slow_czestotliwosci[0][0]}{slow_czestotliwosci[1][0]}{slow_czestotliwosci[2][0]}"
+
+print(key)
