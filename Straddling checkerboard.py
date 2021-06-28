@@ -1,3 +1,7 @@
+import time
+import random
+from ngram import Ngram_score
+
 table = [["8", "3", "1", "4", "0", "5", "7", "2", "6", "9"],
          ["" ,""  ,""  ,"n" ,"e" ,"z" ,"a" , "i", "o", " "],
          ["ć", "u", "w", "t", "g", "r", "f", "p", "ń", "ó"],
@@ -13,7 +17,6 @@ table = [["8", "3", "1", "4", "0", "5", "7", "2", "6", "9"],
 szyfr substytucji
 metoda wspinaczki lub wyżarzanie
 '''
-
 
 '''Define encoding function '''
 def encode(tekst,table):
@@ -121,13 +124,32 @@ def decode(proba,table):
                 result=result+k
 
 
-
     return f"Tekst odszyfrowany: {result.capitalize()}"
 
 
 proba2="81305033193881278493279634636693358408547383320932210278537898191078417"
-#proba2="81 30 5 0 33 19 38 81 2 7 84 9 32 7 9 6 34 6 36 6 9 33 5 84 0 85 4 7 38 33 2 0 9 32 2 10 2 7 85 37 89 81 9 10 7 84 17"
-
 
 print(decode(proba2,table))
+
+'''We are gonna to try atack this code in atack below this comment.'''
+
+ngrams= Ngram_score("pl_quadgrams_zmniejszone.txt")
+
+nr_pl_znak_i_inter=[243,261,263,281,322,324,347,378,380,47,63,46,32,44]
+
+alphabet = "".join([chr(97+i) for i in range(26)])
+
+for i in nr_pl_znak_i_inter:
+    alphabet=alphabet+chr(i)
+
+first_key="".join(random.sample(alphabet,40))
+print(first_key)
+real_key=encode(first_key,table)
+print(real_key)
+
+# key="".join(random.sample(for_random_key,))
+# print(key)
+# print(encode(alphabet,table))
+
+
 
