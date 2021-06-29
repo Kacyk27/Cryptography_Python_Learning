@@ -30,37 +30,45 @@ def encode(tekst,table):
     a1 = 0
     a2 = 0
     a3 = 0
+    lista_wyznacznikow=[]
+    wsk=0
     while z < 5:
         for i in table[z]:
             if i != "" and z == 1:
                 x.append(i)
                 y.append(table[0][len(x) + 2])
 
+            elif i=="" and z==1:
+                lista_wyznacznikow.append(table[0][wsk])
+
             else:
                 if z == 2:
 
                     x.append(i)
-                    y.append(f"8{table[0][a1]}")
+                    y.append(f"{lista_wyznacznikow[0]}{table[0][a1]}")
                     a1 += 1
                 elif z == 3:
                     x.append(i)
-                    y.append(f"3{table[0][a2]}")
+                    y.append(f"{lista_wyznacznikow[1]}{table[0][a2]}")
                     a2 += 1
                 elif z == 4:
                     x.append(i)
-                    y.append(f"1{table[0][a3]}")
+                    y.append(f"{lista_wyznacznikow[2]}{table[0][a3]}")
                     a3 += 1
+            wsk+=1
+
 
         zipobj = zip(x, y)
         slownik_kodu.update(zipobj)
         z += 1
+
 
     result=""
     tekst=tekst.lower()
     for i in tekst:
         if i in slownik_kodu.keys():
             result = result + slownik_kodu[i] + " "
-
+    print(lista_wyznacznikow)
     print("*******Szyfrowanie********")
     return f"{result.replace(' ', '')}"
 
@@ -77,7 +85,7 @@ def decode(proba,table):
     a1 = 0
     a2 = 0
     a3 = 0
-    while z < 5:
+    while z < len(table):
         for i in table[z]:
             if i != "" and z == 1:
                 x.append(i)
@@ -204,6 +212,23 @@ slow_czestotliwosci=sorted(slow_czestotliwosci.items(),key=lambda item: item[1],
 
 print(slow_czestotliwosci)
 
-key=f"{slow_czestotliwosci[0][0]}{slow_czestotliwosci[1][0]}{slow_czestotliwosci[2][0]}"
 
-print(key)
+list_for_key=[]
+for i in slow_czestotliwosci:
+    if i == slow_czestotliwosci[0]:
+        list_for_key.append(slow_czestotliwosci[0][0])
+    elif i == slow_czestotliwosci[1]:
+        list_for_key.append(slow_czestotliwosci[1][0])
+    elif i == slow_czestotliwosci[2]:
+        list_for_key.append(slow_czestotliwosci[2][0])
+
+key_helper1=[]
+for i in table[1]:
+    if i != "":
+        key_helper1.append(i)
+
+
+key_helper2=[]
+
+print(list_for_key)
+
