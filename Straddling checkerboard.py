@@ -1,5 +1,7 @@
 import time
 import random
+
+import ngram
 from ngram import Ngram_score
 
 table = [["8", "3", "1", "4", "0", "5", "7", "2", "6", "9"],
@@ -10,9 +12,11 @@ table = [["8", "3", "1", "4", "0", "5", "7", "2", "6", "9"],
 
 '''
 1. Trzeba stworzyć tablicę częstotliwości dla używanego alfabetu (bigram.txt, trigram.txt quadram.txt).
-2. Wyrzucamy zbędne symbole, których nie ma w alfabecie (w plikach albo w pamięci), liczymy i zapisujemy w formacie znaki - cyfry
+2. Wyrzucamy zbędne symbole, których nie ma w alfabecie (w plikach albo w pamięci), liczymy i zapisujemy 
+w formacie znaki - cyfry
 3. Klucz - szukanie na poziomych cyfrach, możliwe jednoznaczne obliczenie.
-4. Klucz składa się z 3 liczb, 7 symboli znanych o nieznanej kolejności, 30 pozostałych symbolach. (łączna długość == 40)
+4. Klucz składa się z 3 liczb, 7 symboli znanych o nieznanej kolejności, 30 pozostałych symbolach. 
+(łączna długość == 40)
 5. Najprościej wyznacza się te 3 pierwsze liczby.
 szyfr substytucji
 metoda wspinaczki lub wyżarzanie
@@ -68,7 +72,7 @@ def encode(tekst,table):
     for i in tekst:
         if i in slownik_kodu.keys():
             result = result + slownik_kodu[i] + " "
-    print(lista_wyznacznikow)
+    #print(lista_wyznacznikow)
     print("*******Szyfrowanie********")
     return f"{result.replace(' ', '')}"
 
@@ -85,26 +89,32 @@ def decode(proba,table):
     a1 = 0
     a2 = 0
     a3 = 0
+    lista_wyznacznikow = []
+    wsk = 0
     while z < len(table):
         for i in table[z]:
             if i != "" and z == 1:
                 x.append(i)
                 y.append(table[0][len(x) + 2])
 
+            elif i=="" and z==1:
+                lista_wyznacznikow.append(table[0][wsk])
+
             else:
                 if z == 2:
 
                     x.append(i)
-                    y.append(f"8{table[0][a1]}")
+                    y.append(f"{lista_wyznacznikow[0]}{table[0][a1]}")
                     a1 += 1
                 elif z == 3:
                     x.append(i)
-                    y.append(f"3{table[0][a2]}")
+                    y.append(f"{lista_wyznacznikow[1]}{table[0][a2]}")
                     a2 += 1
                 elif z == 4:
                     x.append(i)
-                    y.append(f"1{table[0][a3]}")
+                    y.append(f"{lista_wyznacznikow[2]}{table[0][a3]}")
                     a3 += 1
+            wsk+=1
 
         zipobj = zip(x, y)
         slownik_kodu.update(zipobj)
@@ -141,6 +151,7 @@ def decode(proba,table):
 
 '''We are gonna to try atack this code in atack below.'''
 
+"""At start we have to generate alphabet with polish chars , space and basic punctuation"""
 ngrams= Ngram_score("pl_quadgram.txt", sep="$")
 
 nr_pl_znak_i_inter=[243,261,263,281,322,324,347,378,380,33,63,46,32,44]
@@ -152,8 +163,10 @@ alphabet=alphabet.replace("v","")
 
 for i in nr_pl_znak_i_inter:
     alphabet=alphabet+chr(i)
-print(alphabet)
-print(len(alphabet))
+#print(alphabet)
+#print(len(alphabet))
+
+"""Text for encode"""
 
 tekst_jawny= """Krótka i piękna kariera Zenona Ziembiewicza, zakończona tak groteskowo i tragicznie, dała
 się teraz od strony tego niedorzecznego finału rozważać całkiem na nowo. Jego powszechnie
@@ -193,6 +206,9 @@ natychmiast i przyznała do winy, nie chciała jednak wyjawić jej motywów. Mó
 jeszcze widocznie pod działaniem wstrząsu, że jest "przysłana od umarłych", i bez żadnych
 oznak protestu dała się odwieźć do więzienia."""
 
+
+"""Preparation text for atack - replace newlines.
+If you want only alphabet chars you have to replace spaces and punctuation for "" symbols. """
 tekst_jawny=tekst_jawny.replace("\n"," ")
 
 krypto_tekst=encode(tekst_jawny,table)
@@ -200,7 +216,7 @@ print(krypto_tekst)
 print(decode(krypto_tekst,table))
 
 #**************************************************************
-
+"""Generate frequency of symbols in text"""
 slow_czestotliwosci={}
 for znak in krypto_tekst:
     if znak not in slow_czestotliwosci:
@@ -210,25 +226,121 @@ for znak in krypto_tekst:
         slow_czestotliwosci[znak]+=1
 slow_czestotliwosci=sorted(slow_czestotliwosci.items(),key=lambda item: item[1], reverse=True)
 
-print(slow_czestotliwosci)
+#print(slow_czestotliwosci)
+
+"""Define key generator for table arg."""
+def key_gen(table):
+
+    list_for_key=[]
+    for i in slow_czestotliwosci:
+        if i == slow_czestotliwosci[0]:
+            list_for_key.append(slow_czestotliwosci[0][0])
+        elif i == slow_czestotliwosci[1]:
+            list_for_key.append(slow_czestotliwosci[1][0])
+        elif i == slow_czestotliwosci[2]:
+            list_for_key.append(slow_czestotliwosci[2][0])
+
+    key_helper1=[]
+    for i in table[1]:
+        if i != "":
+            key_helper1.append(i)
 
 
-list_for_key=[]
-for i in slow_czestotliwosci:
-    if i == slow_czestotliwosci[0]:
-        list_for_key.append(slow_czestotliwosci[0][0])
-    elif i == slow_czestotliwosci[1]:
-        list_for_key.append(slow_czestotliwosci[1][0])
-    elif i == slow_czestotliwosci[2]:
-        list_for_key.append(slow_czestotliwosci[2][0])
+    key_helper2=[]
+    wskz=2
+    while wskz<len(table):
+        for i in table[wskz]:
+            key_helper2.append(i)
+        wskz+=1
 
-key_helper1=[]
-for i in table[1]:
-    if i != "":
-        key_helper1.append(i)
+    list_for_key.extend(random.sample(key_helper1,len(key_helper1)))
+    list_for_key.extend(random.sample(key_helper2, len(key_helper2)))
+    key=""
+    for i in list_for_key:
+        key=key+str(i)
+
+    for i in key:
+        if i ==slow_czestotliwosci[0][0]:
+            key=key.replace(i,"q")
+        elif i ==slow_czestotliwosci[1][0]:
+            key=key.replace(i,"v")
+        elif i ==slow_czestotliwosci[2][0]:
+            key=key.replace(i,"x")
+
+    return key
+
+print("Wygenerowany klucz:", key_gen(table))
+
+key=key_gen(table)
+
+"""Define key changer."""
+
+def swap(key):
+    r1,r2 = sorted(random.sample(range(40),2))
+    key2 = key[:r1] + key[r2] + key[r1+1:r2] + key[r1] + key[r2+1:]
+
+    return(key2)
 
 
-key_helper2=[]
+def changeKey(key):
+    r = random.random()
+    if r < 1:
+        return(swap(key))
 
-print(list_for_key)
+print("Zmieniony klucz:", changeKey(key))
 
+real_key=changeKey(key)
+
+
+# def decrypt(kt, klucz):
+#     dc = {}
+#     for i in range(40):
+#         if str(i) in alphabet:
+#             dc[klucz[i]] = alphabet[i]
+#         elif klucz[i]=="q":
+#             dc[klucz[i]] = table[0][0]
+#         elif klucz[i]=="v":
+#             dc[klucz[i]] = table[0][1]
+#         elif klucz[i] == "x":
+#             dc[klucz[i]] = table[0][2]
+#             #print('slownik = ',dc )
+#
+#     tj = ''
+#     for c in kt:
+#         tj += dc[c]
+#
+#     return (tj)
+#
+# def wspinaczkaZRestartem(kt):
+#     oldkey = key
+#     oldvalue = ngrams.score(decrypt(kt, oldkey))
+#     wyniki = [[oldvalue, oldkey]]
+#     t0 = time.time()
+#     i = 0
+#     j = 0
+#     while time.time() - t0 < 10:
+#         newkey = changeKey(oldkey)
+#         newvalue = ngrams.score(decrypt(kt, newkey))
+#         if newvalue > oldvalue:
+#             oldvalue = newvalue
+#             oldkey = newkey
+#             j = 0
+#         if j >= 650:
+#             wyniki.append([oldvalue, oldkey])
+#             oldkey = ''.join(random.sample(alphabet, 40))
+#             oldvalue = ngrams.score(decrypt(kt, oldkey))
+#             j = 0
+#             i += 1
+#         j += 1
+#
+#     print('ilość sprawdzanych początkowych kluczy =', i)
+#     wyniki.sort()
+#     wyniki.reverse()
+#
+#     return (wyniki[0][1])
+#
+# # wsp = wspinaczkaZRestartem(krypto_tekst)
+# # dw = decrypt(krypto_tekst, wsp )
+# # print( dw, ' ', ngrams.score(dw) )
+# print(ngrams.score(krypto_tekst))
+# decrypt(krypto_tekst, key)
